@@ -116,13 +116,12 @@ onMounted(async() => {
     console.log('Face detection started');
     // 顔認識のループ
     setInterval(async () => {
-      const detections = await faceapi.detectSingleFace(video)
-        .withFaceLandmarks()
-        .withFaceDescriptor();
+      const detection = await faceapi.detectSingleFace(video);
       // faceapi.matchDimensions(canvas, video);
 
       if (detections) {
-        const box = detections.detection._box;
+        // console.log(detections);
+        const box = detection._box;
         const x = box.x;
         const y = box.y;
         if(x && y) {
