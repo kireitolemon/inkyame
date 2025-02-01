@@ -56,9 +56,7 @@ const sketch = (p) => {
 
   // Function to set eyeball position
   function eyeballPos() {
-    // eyeBallX = p.mouseX - p.width / 2;
-    // eyeBallY = p.mouseY - p.height / 2;
-    eyeBallX = p.map(faceX, 0, 550, 20, -20);
+    eyeBallX = p.map(faceX, 0, 550, 50, -50);
     eyeBallY = p.map(faceY, 0, 300, -30, 30);
   }
 };
@@ -80,7 +78,9 @@ onMounted(() => {
     const video = document.getElementById('video');
     navigator.mediaDevices
       .getUserMedia({
-        video: true
+        video: {
+          facingMode: 'user'  // Use the front camera on mobile devices
+        }
       })
       .then((stream) => {
         video.srcObject = stream;
@@ -103,7 +103,6 @@ onMounted(() => {
       const detections = await faceapi.detectSingleFace(video)
         .withFaceLandmarks()
         .withFaceDescriptor();
-      // faceapi.matchDimensions(canvas, video);
 
       if (detections) {
         const box = detections.detection._box;
