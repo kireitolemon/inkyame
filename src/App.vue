@@ -25,9 +25,18 @@ const sketch = (p) => {
     p.noStroke();
     
     // Load images
-    face = p.loadImage(faceImage);
-    eyelid = p.loadImage(eyelidImage);
-    eyeball = p.loadImage(eyeballImage);
+    // face = p.loadImage(faceImage);
+    face = p.loadImage(faceImage, img => {
+      img.resize(p.windowWidth, p.windowHeight);
+    });
+    // eyelid = p.loadImage(eyelidImage);
+    eyelid = p.loadImage(eyelidImage, img => {
+      img.resize(p.windowWidth, p.windowHeight);
+    });
+    // eyeball = p.loadImage(eyeballImage);
+    eyeball = p.loadImage(eyeballImage, img => {
+      img.resize(p.windowWidth, p.windowHeight);
+    }); 
   };
 
   p.draw = () => {
@@ -43,21 +52,23 @@ const sketch = (p) => {
 
     // Display the eyes
     if (isEyelidOpen) {
-      p.background("#ffffff");
+      p.background("#fff5e3");
       eyeballPos();
-      p.image(eyeball, eyeBallX, eyeBallY, p.width, p.height);
-      p.image(face, 0, 0, p.width, p.height);
-      p.image(eyelid, 0, -210, p.width, p.height);
+      p.fill(255);
+      p.rect(0, 0, p.width, p.height - 50);
+      p.image(eyeball, eyeBallX, eyeBallY);
+      p.image(face, 0, 0);
+      p.image(eyelid, 0, -210);
     } else {
       p.background("#fff5e3");
-      p.image(eyelid, 0, -50, p.width, p.height);
+      p.image(eyelid, 0, -50);
     }
   };
 
   // Function to set eyeball position
   function eyeballPos() {
-    eyeBallX = p.map(faceX, 0, 550, 50, -50);
-    eyeBallY = p.map(faceY, 0, 300, -30, 30);
+    eyeBallX = p.map(faceX, 0, 384, 70, -70);
+    eyeBallY = p.map(faceY, 0, 216, -45, 45);
   }
 };
 
@@ -83,7 +94,7 @@ onMounted(async() => {
   const video = document.getElementById('video');
   navigator.mediaDevices
     .getUserMedia({
-      video: { facingMode: "user" }  // 内カメラを使用
+      video: { width: 384, height: 216, facingMode: "user" }  // 内カメラを使用
     })
     .then((stream) => {
       video.srcObject = stream;
