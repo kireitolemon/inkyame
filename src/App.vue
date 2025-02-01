@@ -12,6 +12,9 @@ const p5Canvas = ref(null);  // Define the ref properly here
 let faceX = 0;
 let faceY = 0;
 
+const CAMERA_WIDTH = 352;
+const CAMERA_HEIGHT = 198;
+
 const sketch = (p) => {
   let face, eyelid, eyeball;
   let mabatakiFlag = 0;
@@ -48,7 +51,7 @@ const sketch = (p) => {
     }
     if (p.millis() - mabatakiFlag > 120 && !isEyelidOpen) {
       isEyelidOpen = true;
-      mabatakiCycle = p.random(3500, 6000);
+      mabatakiCycle = p.floor(p.random(3500, 6000));
     }
 
     // Display the eyes
@@ -68,8 +71,8 @@ const sketch = (p) => {
 
   // Function to set eyeball position
   function eyeballPos() {
-    eyeBallX = p.map(faceX, 0, 384, 70, -70);
-    eyeBallY = p.map(faceY, 0, 216, -45, 45);
+    eyeBallX = p.map(faceX, 0, CAMERA_WIDTH, 70, -70);
+    eyeBallY = p.map(faceY, 0, CAMERA_HEIGHT, -45, 45);
   }
 };
 
@@ -93,15 +96,13 @@ onMounted(async () => {
   // モデルのロード
   Promise.all([
     faceapi.nets.ssdMobilenetv1.loadFromUri('/weights'),
-    faceapi.nets.faceLandmark68Net.loadFromUri('/weights'),
-    faceapi.nets.faceRecognitionNet.loadFromUri('/weights')
   ]).then(startVideo);
 
   function startVideo() {
     const video = document.getElementById('video');
     navigator.mediaDevices
       .getUserMedia({
-        video: { width: 384, height: 216, facingMode: "user" }
+        video: { width: CAMERA_WIDTH, height: CAMERA_HEIGHT, facingMode: "user" }
       })
       .then((stream) => {
         video.srcObject = stream;
@@ -110,7 +111,7 @@ onMounted(async () => {
         };
       })
       .catch((err) => {
-        console.error('Error accessing webcam: ', err);
+        // console.error('Error accessing webcam: ', err);
       });
   }
 
@@ -120,9 +121,9 @@ onMounted(async () => {
       const detection = await faceapi.detectSingleFace(video);
       if (detection) {
         const { x, y } = detection._box;
-        console.log(`Face detected at x: ${x}, y: ${y}`);
-        faceX = x;
-        faceY = y;
+        // console.log(`Face detected at x: ${x}, y: ${y}`);
+        faceX = Math.floor(x);
+        faceY = Math.floor(y);
       }
     }, 100);
   }
