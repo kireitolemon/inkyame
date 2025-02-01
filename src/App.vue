@@ -1,30 +1,70 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
+  <body>
+    <video id="video" width="720" height="560" autoplay muted></video>
+    <p>a</p>
+  </body>
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
+<script>
+import * as faceapi from "face-api.js";
+const video = document.getElementById("video");
+
+  onMounted(() => {
+    Promise.all([
+      faceapi.nets.tinyFaceDetector.loadFromUri("./models"), //カメラの中の顔を探すmodule
+      faceapi.nets.faceLandmark68Net.loadFromUri("./models"), //目、鼻、口を探すmodule
+      faceapi.nets.faceRecognitionNet.loadFromUri("./models"), //顔付きボックス
+      faceapi.nets.faceExpressionNet.loadFromUri("./models"), //表情を判断するmodule
+      faceapi.nets.ageGenderNet.loadFromUri("./models"), //年齢性別を判断するmodule
+    ]).then(startVideo);});
+
+    video.addEventListener("play", () => {
+      const canvas = faceapi.createCanvasFromMedia(video);
+      document.body.append(canvas);
+      const displaySize = { width: video.width, height: video.height };
+      faceapi.matchDimensions(canvas, displaySize);
+      setInterval(async () => {
+        const detections = await faceapi
+          .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()) //カメラの中にいる顔をすべて認識
+          .withFaceLandmarks() //目、鼻、口を探す
+          .withFaceExpressions() ////表情を判断する
+          .withAgeAndGender(); //年齢性別を判断する
+        if (detections) {
+          const resizedDetections = faceapi.resizeResults(
+            detections,
+            displaySize
+          );
+          canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height); //顔に付いて回るボックス
+          faceapi.draw.drawDetections(canvas, resizedDetections); //顔に箱付きの表現
+          faceapi.draw.drawFaceLandmarks(canvas, resizedDetections); //目鼻口点線表現
+          faceapi.draw.drawFaceExpressions(canvas, resizedDetections); //感情情報表現
+          //年齢、性別表現ボックス
+          const box = resizedDetections.detection.box;
+          const drawBox = new faceapi.draw.DrawBox(box, {
+            label:
+              Math.round(resizedDetections.age) +
+              " year old " +
+              resizedDetections.gender,
+          });
+          drawBox.draw(canvas);
+          getCoordinate(resizedDetections);
+        }
+      }, 100);
+    });
+  methods: {
+      startVideo() {
+      navigator.mediaDevices
+      .getUserMedia({ video: true })
+      .then(function (stream) {
+        video.srcObject = stream;
+      })
+      .catch(function (err) {
+        console.error(err);
+      });
+    },
+    getCoordinate(data) {
+      const mrks = data.landmarks.positions;
+      console.log(27, mrks[27].x, mrks[27].y);
+    },
+  };
+</script>
