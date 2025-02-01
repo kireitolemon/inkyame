@@ -23,6 +23,7 @@ const sketch = (p) => {
   p.setup = () => {
     p.createCanvas(p.windowWidth, p.windowHeight);
     p.noStroke();
+    p.frameRate(15);
     
     // Load images
     // face = p.loadImage(faceImage);
@@ -130,7 +131,7 @@ onMounted(async() => {
           faceY = y;
         }
       }
-    }, 10);
+    }, 50);
   }
 });
 </script>
