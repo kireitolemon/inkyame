@@ -73,16 +73,23 @@ const sketch = (p) => {
   }
 };
 
-onMounted(async() => {
+onMounted(async () => {
   if (p5Canvas.value) {
-    new p5(sketch, p5Canvas.value);  // Attach p5 canvas to the div
+    new p5(sketch, p5Canvas.value);
   }
 
-  await faceapi.tf.setBackend("webgl");
+  // WebGPUが使えるかチェック
+  const canUseWebGPU = await faceapi.tf.setBackend("webgpu").then(() => true).catch(() => false);
+
+  if (!canUseWebGPU) {
+    console.warn("WebGPU not available, falling back to WebGL");
+    await faceapi.tf.setBackend("webgl");
+  }
+
   await faceapi.tf.enableProdMode();
   await faceapi.tf.ENV.set("DEBUG", false);
   await faceapi.tf.ready();
-  
+
   // モデルのロード
   Promise.all([
     faceapi.nets.ssdMobilenetv1.loadFromUri('/weights'),
@@ -90,45 +97,32 @@ onMounted(async() => {
     faceapi.nets.faceRecognitionNet.loadFromUri('/weights')
   ]).then(startVideo);
 
-  // カメラストリームの取得
   function startVideo() {
-  const video = document.getElementById('video');
-  navigator.mediaDevices
-    .getUserMedia({
-      video: { width: 384, height: 216, facingMode: "user" }  // 内カメラを使用
-    })
-    .then((stream) => {
-      video.srcObject = stream;
+    const video = document.getElementById('video');
+    navigator.mediaDevices
+      .getUserMedia({
+        video: { width: 384, height: 216, facingMode: "user" }
+      })
+      .then((stream) => {
+        video.srcObject = stream;
+        video.onplaying = () => {
+          detectFace(video);
+        };
+      })
+      .catch((err) => {
+        console.error('Error accessing webcam: ', err);
+      });
+  }
 
-      // videoが再生されるのを待ってから顔認識を開始
-      video.onplaying = () => {
-        detectFace(video);
-      };
-    })
-    .catch((err) => {
-      console.error('Error accessing webcam: ', err);
-    });
-}
-
-
-  // 顔認識を実行
   async function detectFace(video) {
     console.log('Face detection started');
-    // 顔認識のループ
     setInterval(async () => {
       const detection = await faceapi.detectSingleFace(video);
-      // faceapi.matchDimensions(canvas, video);
-
       if (detection) {
-        // console.log(detection);
-        const box = detection._box;
-        const x = box.x;
-        const y = box.y;
-        if(x && y) {
-          console.log(`Face detected at x: ${x}, y: ${y}`);
-          faceX = x;
-          faceY = y;
-        }
+        const { x, y } = detection._box;
+        console.log(`Face detected at x: ${x}, y: ${y}`);
+        faceX = x;
+        faceY = y;
       }
     }, 100);
   }

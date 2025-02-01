@@ -1,7 +1,7 @@
 init:
 	docker compose build
 	docker compose up -d
-	docker compose run vue-app npm install face-api.js p5 vite-plugin-pwa
+	docker compose run vue-app npm install face-api.js p5 vite-plugin-pwa @tensorflow/tfjs-backend-webgpu
 	docker compose down
 
 	clear
