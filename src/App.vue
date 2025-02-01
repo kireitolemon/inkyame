@@ -9,6 +9,9 @@ import eyeballImage from './assets/images/eyeball.png'
 
 const p5Canvas = ref(null);  // Define the ref properly here
 
+let faceX = 0;
+let faceY = 0;
+
 const sketch = (p) => {
   let face, eyelid, eyeball;
   let mabatakiFlag = 0;
@@ -53,8 +56,8 @@ const sketch = (p) => {
 
   // Function to set eyeball position
   function eyeballPos() {
-    eyeBallX = p.mouseX - p.width / 2;
-    eyeBallY = p.mouseY - p.height / 2;
+    eyeBallX = p.map(faceX, 0, 550, 50, -50);
+    eyeBallY = p.map(faceY, 0, 300, -30, 30);
   }
 };
 
@@ -72,23 +75,24 @@ onMounted(() => {
 
   // カメラストリームの取得
   function startVideo() {
-    const video = document.getElementById('video');
-    navigator.mediaDevices
-      .getUserMedia({
-        video: true
-      })
-      .then((stream) => {
-        video.srcObject = stream;
+  const video = document.getElementById('video');
+  navigator.mediaDevices
+    .getUserMedia({
+      video: { facingMode: "user" }  // 内カメラを使用
+    })
+    .then((stream) => {
+      video.srcObject = stream;
 
-        // videoが再生されるのを待ってから顔認識を開始
-        video.onplaying = () => {
-          detectFace(video);
-        };
-      })
-      .catch((err) => {
-        console.error('Error accessing webcam: ', err);
-      });
-  }
+      // videoが再生されるのを待ってから顔認識を開始
+      video.onplaying = () => {
+        detectFace(video);
+      };
+    })
+    .catch((err) => {
+      console.error('Error accessing webcam: ', err);
+    });
+}
+
 
   // 顔認識を実行
   async function detectFace(video) {
@@ -106,16 +110,19 @@ onMounted(() => {
         const y = box.y;
         if(x && y) {
           console.log(`Face detected at x: ${x}, y: ${y}`);
+          faceX = x;
+          faceY = y;
         }
       }
-    }, 50);
+    }, 10);
   }
 });
 </script>
 
 <template>
-  <div ref="p5Canvas">
-    <video id="video" width="720" height="560" autoplay muted></video>
+  <div>
+    <div ref="p5Canvas"></div>
+    <video id="video" autoplay muted></video>
   </div>
 </template>
 
@@ -125,7 +132,10 @@ div {
   height: 100%;
 }
 
-#video {
+video {
   visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 </style>
