@@ -75,25 +75,24 @@ onMounted(() => {
 
   // カメラストリームの取得
   function startVideo() {
-    const video = document.getElementById('video');
-    navigator.mediaDevices
-      .getUserMedia({
-        video: {
-          facingMode: 'user'  // Use the front camera on mobile devices
-        }
-      })
-      .then((stream) => {
-        video.srcObject = stream;
+  const video = document.getElementById('video');
+  navigator.mediaDevices
+    .getUserMedia({
+      video: { facingMode: "user" }  // 内カメラを使用
+    })
+    .then((stream) => {
+      video.srcObject = stream;
 
-        // videoが再生されるのを待ってから顔認識を開始
-        video.onplaying = () => {
-          detectFace(video);
-        };
-      })
-      .catch((err) => {
-        console.error('Error accessing webcam: ', err);
-      });
-  }
+      // videoが再生されるのを待ってから顔認識を開始
+      video.onplaying = () => {
+        detectFace(video);
+      };
+    })
+    .catch((err) => {
+      console.error('Error accessing webcam: ', err);
+    });
+}
+
 
   // 顔認識を実行
   async function detectFace(video) {
@@ -103,6 +102,7 @@ onMounted(() => {
       const detections = await faceapi.detectSingleFace(video)
         .withFaceLandmarks()
         .withFaceDescriptor();
+      // faceapi.matchDimensions(canvas, video);
 
       if (detections) {
         const box = detections.detection._box;
