@@ -1,0 +1,23 @@
+{
+    "name": "インキャ眼",
+    "short_name": "インキャ眼",
+    "description": "目を合わせずに相手と目を合わせて会話が出来るアプリです。",
+    "start_url": "/",
+    "display": "fullscreen",
+    "orientation": "landscape",
+    "background_color": "#ffffff",
+    "theme_color": "#42b883",
+    "icons": [
+      {
+        "src": "/icons/icon-192x192.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "/icons/icon-512x512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ]
+  }
+  
