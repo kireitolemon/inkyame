@@ -130,7 +130,7 @@ onMounted(async() => {
           faceY = y;
         }
       }
-    }, 50);
+    }, 100);
   }
 });
 </script>
