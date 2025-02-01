@@ -61,10 +61,15 @@ const sketch = (p) => {
   }
 };
 
-onMounted(() => {
+onMounted(async() => {
   if (p5Canvas.value) {
     new p5(sketch, p5Canvas.value);  // Attach p5 canvas to the div
   }
+
+  await faceapi.tf.setBackend("webgl");
+  await faceapi.tf.enableProdMode();
+  await faceapi.tf.ENV.set("DEBUG", false);
+  await faceapi.tf.ready();
   
   // モデルのロード
   Promise.all([
