@@ -59,7 +59,7 @@ const sketch = (p) => {
       p.rect(0, 0, p.width, p.height - 50);
       p.image(eyeball, eyeBallX, eyeBallY);
       p.image(face, 0, 0);
-      p.image(eyelid, 0, -210);
+      p.image(eyelid, 0, -230);
     } else {
       p.background("#fff5e3");
       p.image(eyelid, 0, -50);
