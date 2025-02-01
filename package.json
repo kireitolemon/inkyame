@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tensorflow/tfjs-backend-webgpu": "^4.22.0",
     "face-api.js": "^0.22.2",
     "p5": "^1.11.3",
     "vite-plugin-pwa": "^0.21.1",
