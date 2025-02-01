@@ -13,16 +13,11 @@
     ```sh
     make init
     ```
-4. docker-compose.yml内のコメントアウトを無くす:
-    ```yml
-    # command: npm run dev -- --host
-    command: npm run dev -- --host
-    ```
-5. ローカルサーバーを起動して開発を始める:
+4. ローカルサーバーを起動して開発を始める:
     ```sh
     make start
     ```
-6. ブラウザを開いて確認する:\
+5. ブラウザを開いて確認する:\
     [http://localhost:5173/](http://localhost:5173/)
 
 ## アプリ説明（後で書く）
