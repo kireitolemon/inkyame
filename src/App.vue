@@ -119,8 +119,8 @@ onMounted(async() => {
       const detection = await faceapi.detectSingleFace(video);
       // faceapi.matchDimensions(canvas, video);
 
-      if (detections) {
-        // console.log(detections);
+      if (detection) {
+        // console.log(detection);
         const box = detection._box;
         const x = box.x;
         const y = box.y;
