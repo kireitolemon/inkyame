@@ -23,7 +23,8 @@ PWAでネイティブアプリ風になっているため、全画面表示を�
 - OS
     - Windows 11
     - Android 13
-    - iPAdOS 18.2.1
+    - iPadOS 18.2.1
+    - iOS 18.3
 - ブラウザー
     - Chrome
     - Microsoft Edge
