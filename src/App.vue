@@ -23,23 +23,26 @@ const sketch = (p) => {
   let eyeBallX = 0;
   let eyeBallY = 0;
 
+  const WINDOW_WIDTH = p.min(p.windowWidth, 800);
+  const WINDOW_HEIGHT = p.min(p.windowHeight, 450);
+
   p.setup = () => {
-    p.createCanvas(p.windowWidth, p.windowHeight);
+    p.createCanvas(WINDOW_WIDTH, WINDOW_HEIGHT);
     p.noStroke();
     p.frameRate(15);
     
     // Load images
     // face = p.loadImage(faceImage);
     face = p.loadImage(faceImage, img => {
-      img.resize(p.windowWidth, p.windowHeight);
+      img.resize(WINDOW_WIDTH, WINDOW_HEIGHT);
     });
     // eyelid = p.loadImage(eyelidImage);
     eyelid = p.loadImage(eyelidImage, img => {
-      img.resize(p.windowWidth, p.windowHeight);
+      img.resize(WINDOW_WIDTH, WINDOW_HEIGHT);
     });
     // eyeball = p.loadImage(eyeballImage);
     eyeball = p.loadImage(eyeballImage, img => {
-      img.resize(p.windowWidth, p.windowHeight);
+      img.resize(WINDOW_WIDTH, WINDOW_HEIGHT);
     }); 
   };
 
@@ -111,7 +114,7 @@ onMounted(async () => {
         };
       })
       .catch((err) => {
-        // console.error('Error accessing webcam: ', err);
+        console.error('Error accessing webcam: ', err);
       });
   }
 
@@ -121,9 +124,9 @@ onMounted(async () => {
       const detection = await faceapi.detectSingleFace(video);
       if (detection) {
         const { x, y } = detection._box;
-        // console.log(`Face detected at x: ${x}, y: ${y}`);
         faceX = Math.floor(x);
         faceY = Math.floor(y);
+        console.log(`Face detected at x: ${faceX}, y: ${faceY}`);
       }
     }, 100);
   }
@@ -131,20 +134,23 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div>
+  <div class="app">
     <div ref="p5Canvas"></div>
-    <video id="video" autoplay muted></video>
+    <video id="video" autoplay muted playsinline></video>
   </div>
 </template>
 
 <style scoped>
-div {
-  width: 100%;
-  height: 100%;
+.app {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
 }
 
 video {
-  visibility: hidden;
+  opacity: 0;
   position: absolute;
   top: 0;
   left: 0;
