@@ -126,7 +126,7 @@ onMounted(async () => {
         const { x, y } = detection._box;
         faceX = Math.floor(x);
         faceY = Math.floor(y);
-        console.log(`Face detected at x: ${faceX}, y: ${faceY}`);
+        // console.log(`Face detected at x: ${faceX}, y: ${faceY}`);
       }
     }, 100);
   }
