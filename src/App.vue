@@ -133,7 +133,7 @@ onMounted(async () => {
 <template>
   <div>
     <div ref="p5Canvas"></div>
-    <video id="video" autoplay muted></video>
+    <video id="video" autoplay muted playsinline></video>
   </div>
 </template>
 
